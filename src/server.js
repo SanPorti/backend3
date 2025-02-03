@@ -15,6 +15,10 @@ import mongoose from 'mongoose'
 //import cluster from 'cluster'
 //import {cpus} from 'os'
 import mocksRouter from './routes/mocks.routes.js'
+import dotenv from "dotenv";
+
+dotenv.config();
+const uriConexion = process.env.URI_MONGO;
 
 const app = express()
 const PORT = 8000
@@ -26,7 +30,7 @@ app.use(session({
     //retries: Cantidad de veces que el servidor va a intentar leer ese archivo
     //store: new fileStorage({path: './src/sessions', ttl: 10, retries: 1 }),
     store: MongoStore.create({
-        mongoUrl: "mongodb+srv://admin:12345@cluster0.etdwv.mongodb.net/backend3",
+        mongoUrl: uriConexion,
         mongoOptions: {},
         ttl: 15
     }),
@@ -35,7 +39,7 @@ app.use(session({
     saveUninitialized: true
 }))
 
-mongoose.connect("mongodb+srv://admin:12345@cluster0.etdwv.mongodb.net/backend3")
+mongoose.connect(uriConexion)
 .then(() => console.log("DB is connected"))
 .catch((e) => console.log("Error al conectarme a DB:", e))
 

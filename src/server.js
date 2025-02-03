@@ -22,13 +22,9 @@ const uriConexion = process.env.URI_MONGO;
 
 const app = express()
 const PORT = 8000
-//const fileStorage = new FileStore(session)
 app.use(express.json())
 app.use(cookieParser("CoderSecret")) //Si agrego contraseña "firmo" las cookies
 app.use(session({
-    //ttl Time to Live tiempo de vida (segundos)
-    //retries: Cantidad de veces que el servidor va a intentar leer ese archivo
-    //store: new fileStorage({path: './src/sessions', ttl: 10, retries: 1 }),
     store: MongoStore.create({
         mongoUrl: uriConexion,
         mongoOptions: {},
@@ -96,19 +92,3 @@ app.get('/', (req,res) => {
 app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`);
 })
-
-/*
-if(cluster.isPrimary) {
-    console.log("Soy el proceso principal");
-    for(let i= 0; i < cpus().length; i++) {
-        cluster.fork()
-    }
-    app.listen(PORT, () => {
-        console.log(`Server on port ${PORT}`);
-    })
-} else {
-    console.log("Soy un worker");
-    app.listen(5000, () => {
-        console.log(`Server on port ${5000}`);
-    })
-}*/

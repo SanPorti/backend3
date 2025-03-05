@@ -26,17 +26,36 @@ const userSchema = new Schema({
     rol: {
         type: String,
         default: "Usuario"
-    }, 
+    },
     cart: {
         type: Schema.Types.ObjectId,
         ref: "carts"
+    },
+    documents: {
+        type: [
+            {
+                name: {
+                    type: String,
+                    required: true,
+                },
+                reference: {
+                    type: String,
+                    required: true
+                }
+            }
+        ],
+        default: []
+    },
+    last_connection : {
+        type: Date, 
+        default: null
     }
 })
 
 // Creo un carrito cada vez que creo un usuario
 userSchema.post('save', async function name(userCreated) {
     try {
-        const newCart = await cartModel.create({products: []})
+        const newCart = await cartModel.create({ products: [] })
         userCreated.cart = newCart._id
     } catch (e) {
         console.log(e);;

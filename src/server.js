@@ -5,8 +5,8 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import { engine } from 'express-handlebars';
 import { addLogger } from './utils/logger.js'
-// import passport from 'passport'
-// import initalizatePassport from './config/passport.config.js'
+import passport from 'passport'
+import initalizatePassport from './config/passport.config.js'
 import MongoStore from 'connect-mongo'
 import sessionRouter from './routes/sessions.routes.js'
 import productRouter from './routes/products.routes.js'
@@ -16,12 +16,30 @@ import mongoose from 'mongoose'
 //import {cpus} from 'os'
 import mocksRouter from './routes/mocks.routes.js'
 import dotenv from "dotenv";
+import userRouter from './routes/users.routes.js'
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUIExpress from "swagger-ui-express"
 
 dotenv.config();
 const uriConexion = process.env.URI_MONGO;
+const claveDeSesion = process.env.SECRET_SESSION;
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.1.0',
+        info: {
+            title: "Documentacion de API ecommerce",
+            description: "API de mi proyecto final"
+        }
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+}
 
 const app = express()
 const PORT = 8000
+
+const specs = swaggerJsDoc(swaggerOptions)
+
 app.use(express.json())
 app.use(cookieParser("CoderSecret")) //Si agrego contraseña "firmo" las cookies
 app.use(session({
@@ -30,7 +48,7 @@ app.use(session({
         mongoOptions: {},
         ttl: 15
     }),
-    secret: 'SessionSecret',
+    secret: claveDeSesion,
     resave: true,
     saveUninitialized: true
 }))
@@ -39,9 +57,9 @@ mongoose.connect(uriConexion)
 .then(() => console.log("DB is connected"))
 .catch((e) => console.log("Error al conectarme a DB:", e))
 
-// initalizatePassport()
-// app.use(passport.initialize())
-// app.use(passport.session())
+initalizatePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars')
 app.set('views', path.join(__dirname, 'views')) //Concateno evitando erroes de / o \
@@ -53,6 +71,8 @@ app.use('/api/sessions', sessionRouter)
 app.use('/api/products', productRouter)
 app.use('/api/carts', cartRouter)
 app.use('/api/mocks', mocksRouter)
+app.use('/api/users', userRouter)
+app.use('/api/docs', swaggerUIExpress.serve, swaggerUIExpress.setup(specs))
 
 app.post('/', (req,res) => {
     req.logger.warn("Warning!!!!")
@@ -92,3 +112,5 @@ app.get('/', (req,res) => {
 app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`);
 })
+
+

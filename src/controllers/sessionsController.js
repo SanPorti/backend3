@@ -1,14 +1,22 @@
 
+import { generateToken, updateLastConnection } from "../utils/jwt.js"
+
 export const login = async (req,res) => {
     try {
         if(!req.user) {
             return res.status(401).send("Usuario o contraseña no validos")
         }
+
+        const token = generateToken(req.user)
+
         req.session.user = {
             email: req.user.email,
             first_name: req.user.first_name
         } 
-        res.status(200).redirect("/")
+        
+        updateLastConnection(req.user._id);
+
+        res.status(200).cookie('token', token, {httpOnly: true, secure: false, maxAge: 86400000}).redirect("/")
     }catch(e) {
         console.log(e); 
         res.status(500).send("Error al loguear usuario")

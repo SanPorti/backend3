@@ -1,0 +1,96 @@
+
+paths:
+
+  /login:
+    post:
+      summary: Autentica un usuario y genera una sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "usuario@example.com"
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        200:
+          description: Usuario autenticado con éxito, sesión iniciada
+        401:
+          description: Usuario o contraseña no válidos
+        500:
+          description: Error al procesar la autenticación
+
+  /register:
+    post:
+      summary: Registra un nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        201:
+          description: Usuario creado correctamente
+        400:
+          description: El email ya está registrado
+        500:
+          description: Error al registrar usuario
+
+  /current:
+    get:
+      summary: Obtiene la información del usuario autenticado
+      responses:
+        200:
+          description: Información del usuario autenticado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          description: No autorizado, token inválido o ausente
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: id del usuario
+        first_name:
+          type: string
+          description: nombre del usuario 
+        last_name:
+          type: string
+          description: apellido del usuario
+        email:
+          type: string
+          description: email del usuario
+        password:
+          type: string
+          description: password del usuario
+        age:
+          type: integer
+          description: edad del usuario
+        rol:
+          type: string
+          description: rol del usuario
+        cart:
+          type: string
+          description: id del carrito del usuario
+      example: 
+        id: "12345"
+        first_name: "Claudio"
+        last_name: "Gonzalez" 
+        email: "claudio@gonzalez.com"
+        password: $g123nkj12h4
+        age: 45
+        cart: "ktghjk2213rhjk12h3"
+
+

@@ -1,0 +1,139 @@
+
+paths:
+  /:
+    get:
+      summary: Obtener todos los productos
+      parameters:
+        - name: limit
+          in: query
+          description: Número máximo de productos a devolver
+          schema:
+            type: integer
+        - name: page
+          in: query
+          description: Página de resultados
+          schema:
+            type: integer
+        - name: metFilter
+          in: query
+          description: Campo por el que filtrar
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: Valor del filtro
+          schema:
+            type: string
+        - name: metOrder
+          in: query
+          description: Campo por el que ordenar
+          schema:
+            type: string
+        - name: ord
+          in: query
+          description: Orden (ascendente o descendente)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de productos obtenida correctamente
+        "500":
+          description: Error del servidor
+    post:
+      summary: Crear un nuevo producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        "201":
+          description: Producto creado correctamente
+        "500":
+          description: Error del servidor
+  /{pid}:
+    get:
+      summary: Obtener un producto por ID
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto obtenido correctamente
+        "404":
+          description: Producto no encontrado
+        "500":
+          description: Error del servidor
+    put:
+      summary: Actualizar un producto por ID
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        "200":
+          description: Producto actualizado correctamente
+        "404":
+          description: Producto no encontrado
+        "500":
+          description: Error del servidor
+    delete:
+      summary: Eliminar un producto por ID
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto eliminado correctamente
+        "404":
+          description: Producto no encontrado
+        "500":
+          description: Error del servidor
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        category:
+          type: string
+          description: Categoría del producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: number
+          description: Cantidad disponible en inventario
+        code:
+          type: string
+          description: Código único del producto
+      example: 
+        title: "producto 1"
+        description: "producto pequeño"
+        category: "prueba" 
+        price: 1000
+        stock: 50
+        code: "sdkfh1j2h"
